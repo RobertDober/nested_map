@@ -1,0 +1,32 @@
+name: CI
+env:
+  MIX_ENV: test
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    strategy:
+      matrix:
+        include:
+          - pair:
+            otp: 24.0
+            elixir: 1.12.2
+          - pair:
+            otp: 24.0.5
+            elixir: 1.12.2
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+      - run: mix deps.get
+      - run: mix coveralls.github
