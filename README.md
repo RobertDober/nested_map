@@ -8,7 +8,7 @@ and any changes you make in this file will most likely be lost
 # NestedMap
 
 [![CI](https://github.com/RobertDober/nested_map/actions/workflows/ci.yml/badge.svg)](https://github.com/RobertDober/nested_map/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/RobertDober/nested_map/badge.svg?branch=master)](https://coveralls.io/github/RobertDober/nested_map?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/RobertDober/nested_map/badge.svg?branch=main)](https://coveralls.io/github/RobertDober/nested_map?branch=main)
 [![Hex.pm](https://img.shields.io/hexpm/v/nested_map.svg)](https://hex.pm/packages/nested_map)
 [![Hex.pm](https://img.shields.io/hexpm/dw/nested_map.svg)](https://hex.pm/packages/nested_map)
 [![Hex.pm](https://img.shields.io/hexpm/dt/nested_map.svg)](https://hex.pm/packages/nested_map)
