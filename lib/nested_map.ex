@@ -13,6 +13,9 @@ defmodule NestedMap do
     iex(0)> flatten(%{}) # empty
     []
 
+    iex(0)> flatten(%{a: 1, b: 2}) # flat
+    [{[:a], 1}, {[:b], 2}]
+
   """
 
   def flatten(map), do: map |> Enum.into([]) |> NestedMap.Flattener.flatten([], [])
