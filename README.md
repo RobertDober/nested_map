@@ -8,6 +8,7 @@ and any changes you make in this file will most likely be lost
 # NestedMap
 
 [![CI](https://github.com/RobertDober/nested_map/actions/workflows/ci.yml/badge.svg)](https://github.com/RobertDober/nested_map/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/RobertDober/nested_map/badge.svg?branch=master)](https://coveralls.io/github/RobertDober/nested_map?branch=master)
 [![Hex.pm](https://img.shields.io/hexpm/v/nested_map.svg)](https://hex.pm/packages/nested_map)
 [![Hex.pm](https://img.shields.io/hexpm/dw/nested_map.svg)](https://hex.pm/packages/nested_map)
 [![Hex.pm](https://img.shields.io/hexpm/dt/nested_map.svg)](https://hex.pm/packages/nested_map)
@@ -28,6 +29,15 @@ and the following code examples are therefore verified with `ExUnit` doctests.
   - accessing nested values with a list of keys
   - flatting a nested map to a list of pairs of list of keys and values
   - nested merging
+
+  ### Flatting
+
+
+  iex(0)> flatten(%{}) # empty
+  []
+
+  iex(0)> flatten(%{a: 1, b: 2}) # flat
+  [{[:a], 1}, {[:b], 2}]
 
 
 
