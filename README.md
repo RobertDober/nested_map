@@ -30,28 +30,71 @@ and the following code examples are therefore verified with `ExUnit` doctests.
   - flatting a nested map to a list of pairs of list of keys and values
   - nested merging
 
+  ### Accessing
+
+  #### Basic interface
+
+    iex(0)> fetch(%{}, :a) # not found
+    :error
+
+    iex(1)> fetch(%{b: 2}, :a, 42) # default
+    {:ok, 42}
+
+    iex(2)> fetch(%{a: 2}, :a, 42) # default
+    {:ok, 2}
+
+    iex(3)> fetch(%{a: 41}, :a) # found
+    {:ok, 41}
+
+    iex(4)> fetch!(%{a: 41}, :a)
+    41
+
+    iex(5)> fetch!(%{}, :a, 42)
+    42
+
+    iex(6)> try do
+    ...(6)>   fetch!(%{}, :a)
+    ...(6)> rescue
+    ...(6)>   NestedMap.Error -> :caught
+    ...(6)> end
+    :caught
+
+  #### Applied to nests
+
+    iex(7)> map = %{
+    ...(7)>   a: 1,
+    ...(7)>   b: %{
+    ...(7)>      c: %{
+    ...(7)>         a: 100,
+    ...(7)>         b: 200
+    ...(7)>         },
+    ...(7)>      d: 40}}
+    ...(7)> {fetch(map, [:b, :c]), fetch(map, [:b, :c, :b]), fetch!(map, [:b, :x], :not_found)}
+    {{:ok, %{a: 100, b: 200}}, {:ok, 200}, :not_found}
+
+
+
   ### Flatting
 
 
-    iex(0)> flatten(%{}) # empty
+    iex(8)> flatten(%{}) # empty
     []
 
-    iex(1)> flatten(%{a: 1, b: 2}) # flat
+    iex(9)> flatten(%{a: 1, b: 2}) # flat
     [{[:a], 1}, {[:b], 2}]
 
-    iex(2)> map = %{
-    ...(2)>   a: 1,
-    ...(2)>   b: %{
-    ...(2)>      ["you", "can"] => %{
-    ...(2)>          "do" => "that",
-    ...(2)>          "if" => %{you: :want}
-    ...(2)>      },
-    ...(2)>      the_inevitable: 42},
-    ...(2)>   c: 2}
-    ...(2)> flatten(map) # Be aware that this syntax puts the symbol key
-    ...(2)>              # `the_inevitable` before the other keys!
+    iex(10)> map = %{
+    ...(10)>   a: 1,
+    ...(10)>   b: %{
+    ...(10)>      ["you", "can"] => %{
+    ...(10)>          "do" => "that",
+    ...(10)>          "if" => %{you: :want}
+    ...(10)>      },
+    ...(10)>      the_inevitable: 42},
+    ...(10)>   c: 2}
+    ...(10)> flatten(map) # Be aware that this syntax puts the symbol key
+    ...(10)>              # `the_inevitable` before the other keys!
     [{[:a], 1}, {[:b, :the_inevitable], 42}, {[:b, ["you", "can"], "do"], "that"}, {[:b, ["you", "can"], "if", :you], :want}, {[:c], 2}]
-
 
 
 
