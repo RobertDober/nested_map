@@ -1,8 +1,5 @@
 defmodule NestedMapTest do
   use ExUnit.Case
-  doctest NestedMap
+  doctest NestedMap, import: true
 
-  test "greets the world" do
-    assert NestedMap.hello() == :world
-  end
 end
