@@ -73,7 +73,23 @@ defmodule NestedMap do
       ...(10)> flatten(map) # Be aware that this syntax puts the symbol key
       ...(10)>              # `the_inevitable` before the other keys!
       [{[:a], 1}, {[:b, :the_inevitable], 42}, {[:b, ["you", "can"], "do"], "that"}, {[:b, ["you", "can"], "if", :you], :want}, {[:c], 2}]
+
+    #### Accessing flattened elements
+
+    iex(0)> flattened =
+    ...(0)>   [ {[:a, :a, :a, :a, :b], 1},
+    ...(0)>     {[:a, :a, :a, :b], 1},
+    ...(0)>     {[:a, :a, :b], 2},
+    ...(0)>     {[:a, :b], 3},
+    ...(0)>     {[:b], 4} ]
+    ...(0)> find(flattened, [:a, :a, :b])
+    2
+
   """
+
+  @doc false
+  @spec find(flattened_map_t(), list()) :: any()
+  def find(flattened, keys), do: NestedMap.Fetcher.find(flattened, keys)
 
   @doc false
   @spec flatten(map()) :: flattened_map_t()

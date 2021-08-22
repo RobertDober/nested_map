@@ -1,6 +1,8 @@
 defmodule NestedMap.Types do
   defmacro __using__(_opts) do
     quote do
+      @type maybe(t) :: t | nil
+
       @type ok_t :: {:ok, any()}
       @type result_t :: ok_t() | :error
       @type pair_t :: {any(), any()}
