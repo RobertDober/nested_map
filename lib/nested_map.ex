@@ -8,7 +8,15 @@ defmodule NestedMap do
     - flatting a nested map to a list of pairs of list of keys and values
     - nested merging
 
+    ## Complexity
+
+    When describing complexities we assume `n` total entries (length of flattened list) with
+    a maximum depth of `k` (maximum length of key list). We do not define a bound other than
+    `O(n)` for the number of elements of depth `k` and therefore define `m = n*k`
+
     ### Accessing
+
+    Is of complexity `O(k)` of course
 
     #### Basic interface
 
@@ -54,6 +62,7 @@ defmodule NestedMap do
 
     ### Flattening
 
+    The complexity is `O(m)`
 
       iex(8)> flatten(%{}) # empty
       []
@@ -76,26 +85,47 @@ defmodule NestedMap do
 
     #### Accessing flattened elements
 
-    iex(11)> flattened =
-    ...(11)>   [ {[:a, :a, :a, :a, :b], 1},
-    ...(11)>     {[:a, :a, :a, :b], 1},
-    ...(11)>     {[:a, :a, :b], 2},
-    ...(11)>     {[:a, :b], 3},
-    ...(11)>     {[:b], 4} ]
-    ...(11)> find(flattened, [:a, :a, :b])
-    2
+      iex(11)> flattened =
+      ...(11)>   [ {[:a, :a, :a, :a, :b], 1},
+      ...(11)>     {[:a, :a, :a, :b], 1},
+      ...(11)>     {[:a, :a, :b], 2},
+      ...(11)>     {[:a, :b], 3},
+      ...(11)>     {[:b], 4} ]
+      ...(11)> find(flattened, [:a, :a, :b])
+      2
 
 
     ### Deepening
-    
-    iex(11)> flattened =
-    ...(11)>   [ {[:a, :a, :a, :a, :b], 1},
-    ...(11)>     {[:a, :a, :a, :b], 1},
-    ...(11)>     {[:a, :a, :b], 2},
-    ...(11)>     {[:a, :b], 3},
-    ...(11)>     {[:b], 4} ]
-    ...(11)> deepen(flattened)
-    %{a: %{a: %{a: %{a: %{b: 1}, b: 1}, b: 2}, b: 3}, b: 4}
+
+    The complexity = `O(k) * O(n) * he complexity of Map.merge`
+
+      iex(12)> flattened =
+      ...(12)>   [ {[:a, :a, :a, :a, :b], 1},
+      ...(12)>     {[:a, :a, :a, :b], 1},
+      ...(12)>     {[:a, :a, :b], 2},
+      ...(12)>     {[:a, :b], 3},
+      ...(12)>     {[:b], 4} ]
+      ...(12)> deepen(flattened)
+      %{a: %{a: %{a: %{a: %{b: 1}, b: 1}, b: 2}, b: 3}, b: 4}
+
+    #### One can pass a list that does not represent a flattened map
+
+      iex(13)> impossible =
+      ...(13)>   [ {[:a, :a, :a, :a, :b], 1},
+      ...(13)>     {[:a, :a, :b], 2},
+      ...(13)>     {[:a, :a, :b, :b], 3}, # %{a: %{a: %{b: value}}} value was not a map according
+      ...(13)>                            # to the previous line
+      ...(13)>     {[:a, :b], 4},
+      ...(13)>     {[:b], 5} ]
+      ...(13)> deepen(impossible) # the entry {[:a, :a, :b], 2} will simply be overwritten
+      %{a: %{a: %{a: %{a: %{b: 1}}, b: %{b: 3}}, b: 4}, b: 5}
+
+      iex(0)> tail =
+      ...(0)> [ {[:a, :b, :c], 1},
+      ...(0)>   {[:a, :b], 3} ]
+      ...(0)> deepen(tail)
+      %{a: %{b: 3}}
+
 
   """
 

@@ -17,14 +17,15 @@ defmodule NestedMap.Deepener do
   defp _ascent(keys, result_stack)
   defp _ascent([key|keys], [fst, snd|rest]), do: _ascent(keys, [Map.put(snd, key, fst)|rest])
   defp _ascent([], [result]), do: result
-  defp _ascent([], [fst, snd]), do: Map.merge(fst, snd)
 
 
   defp _descent(keys, flattened_map_entry, result_stack)
-  defp _descent(keys, {[_key], _value}=flattened_map_entry, result_stack), do: _forced_override(keys, flattened_map_entry, result_stack)
-  defp _descent(keys, {[key|keys1], value}, [head|_tail]=result) do
+  defp _descent(keys, {[_key], _value}=flattened_map_entry, result) do
+    _ascent(keys, _merge_onto_head(flattened_map_entry, result))
+  end
+  defp _descent(keys, {[key|keys1], value}=flattened_map_entry, [head|_tail]=result) do
     case _get_map_entry(head, key) do
-      :error -> _ascent(keys, [_make_map_entry([key|keys1], value)|result])
+      :error -> _ascent(keys,_merge_onto_head(flattened_map_entry, result)) 
       {:ok, entry} -> _descent([key|keys], {keys1, value}, [entry|result])
     end
   end
@@ -36,9 +37,13 @@ defmodule NestedMap.Deepener do
     end
   end
 
-  defp _make_map_entry(keys, value) do
+  defp _make_map_entry({keys, value}) do
     keys
     |> Enum.reverse()
     |> Enum.reduce(value, fn k, result -> %{k => result} end)
+  end
+
+  defp _merge_onto_head(flattened_map_entry, [head|tail]) do
+    [Map.merge(head, _make_map_entry(flattened_map_entry)) | tail]
   end
 end
