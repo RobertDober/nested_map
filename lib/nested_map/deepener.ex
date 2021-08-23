@@ -18,7 +18,6 @@ defmodule NestedMap.Deepener do
   defp _ascent([key|keys], [fst, snd|rest]), do: _ascent(keys, [Map.put(snd, key, fst)|rest])
   defp _ascent([], [result]), do: result
 
-
   defp _descent(keys, flattened_map_entry, result_stack)
   defp _descent(keys, {[_key], _value}=flattened_map_entry, result) do
     _ascent(keys, _merge_onto_head(flattened_map_entry, result))

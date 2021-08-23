@@ -120,10 +120,21 @@ defmodule NestedMap do
       ...(13)> deepen(impossible) # the entry {[:a, :a, :b], 2} will simply be overwritten
       %{a: %{a: %{a: %{a: %{b: 1}}, b: %{b: 3}}, b: 4}, b: 5}
 
-      iex(0)> tail =
-      ...(0)> [ {[:a, :b, :c], 1},
-      ...(0)>   {[:a, :b], 3} ]
-      ...(0)> deepen(tail)
+    A consequence of this is that, while this assumption holds for all maps
+
+         deepen(flatten(map)) == map
+
+    the symmetric assumption
+
+        flatten(deepen(list)) == list
+
+    does not, **even** if `list` is of the appropriate type, meaning that
+    `deepen(list)` returns a map.
+
+      iex(14)> tail =
+      ...(14)> [ {[:a, :b, :c], 1},
+      ...(14)>   {[:a, :b], 3} ]
+      ...(14)> deepen(tail)
       %{a: %{b: 3}}
 
 

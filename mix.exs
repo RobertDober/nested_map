@@ -1,11 +1,15 @@
 defmodule NestedMap.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+  @url "https://github.com/RobertDober/nested_map"
+
   def project do
     [
       app: :nested_map,
       version: "0.1.0",
       elixir: "~> 1.12",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -14,6 +18,7 @@ defmodule NestedMap.MixProject do
         "coveralls.post": :test,
         "coveralls.html": :test
       ],
+      aliases: [docs: &build_docs/1],
 
       deps: deps()
     ]
@@ -40,4 +45,34 @@ defmodule NestedMap.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
   end
+
+  defp elixirc_paths(env)
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:dev), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  @prerequisites """
+  run `mix escript.install hex ex_doc` and adjust `PATH` accordingly
+  """
+  @module "NestedMap"
+  defp build_docs(_) do
+    Mix.Task.run("compile")
+    ex_doc = Path.join(Mix.path_for(:escripts), "ex_doc")
+    Mix.shell().info("Using escript: #{ex_doc} to build the docs")
+
+    unless File.exists?(ex_doc) do
+      raise "cannot build docs because escript for ex_doc is not installed, make sure to \n#{
+              @prerequisites
+            }"
+    end
+
+    args = [@module, @version, Mix.Project.compile_path()]
+    opts = ~w[--main #{@module} --source-ref v#{@version} --source-url #{@url}]
+
+    Mix.shell().info("Running: #{ex_doc} #{inspect(args ++ opts)}")
+    System.cmd(ex_doc, args ++ opts)
+    Mix.shell().info("Docs built successfully")
+  end
 end
+
+#  SPDX-License-Identifier: Apache-2.0
