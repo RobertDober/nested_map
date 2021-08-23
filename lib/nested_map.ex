@@ -8,17 +8,17 @@ defmodule NestedMap do
     - flatting a nested map to a list of pairs of list of keys and values
     - nested merging
 
-    ## Complexity
+  ## Complexity
 
     When describing complexities we assume `n` total entries (length of flattened list) with
     a maximum depth of `k` (maximum length of key list). We do not define a bound other than
     `O(n)` for the number of elements of depth `k` and therefore define `m = n*k`
 
-    ### Accessing
+  ### Accessing
 
     Is of complexity `O(k)` of course
 
-    #### Basic interface
+  #### Basic interface
 
       iex(0)> fetch(%{}, :a) # not found
       :error
@@ -45,7 +45,7 @@ defmodule NestedMap do
       ...(6)> end
       :caught
 
-    #### Applied to nests
+  #### Applied to nests
 
       iex(7)> map = %{
       ...(7)>   a: 1,
@@ -60,7 +60,7 @@ defmodule NestedMap do
 
 
 
-    ### Flattening
+  ### Flattening
 
     The complexity is `O(m)`
 
@@ -83,7 +83,7 @@ defmodule NestedMap do
       ...(10)>              # `the_inevitable` before the other keys!
       [{[:a], 1}, {[:b, :the_inevitable], 42}, {[:b, ["you", "can"], "do"], "that"}, {[:b, ["you", "can"], "if", :you], :want}, {[:c], 2}]
 
-    #### Accessing flattened elements
+  #### Accessing flattened elements
 
       iex(11)> flattened =
       ...(11)>   [ {[:a, :a, :a, :a, :b], 1},
@@ -95,7 +95,7 @@ defmodule NestedMap do
       2
 
 
-    ### Deepening
+  ### Deepening
 
     The complexity = `O(k) * O(n) * he complexity of Map.merge`
 
@@ -108,7 +108,7 @@ defmodule NestedMap do
       ...(12)> deepen(flattened)
       %{a: %{a: %{a: %{a: %{b: 1}, b: 1}, b: 2}, b: 3}, b: 4}
 
-    #### One can pass a list that does not represent a flattened map
+  #### One can pass a list that does not represent a flattened map
 
       iex(13)> impossible =
       ...(13)>   [ {[:a, :a, :a, :a, :b], 1},
