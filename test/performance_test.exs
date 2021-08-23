@@ -1,4 +1,4 @@
-defmodule Test.FlattenTest do
+defmodule Test.PerformanceTest do
   use ExUnit.Case
 
   @moduletag timeout: 10_000

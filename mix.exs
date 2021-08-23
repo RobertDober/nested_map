@@ -32,6 +32,7 @@ defmodule NestedMap.MixProject do
       # {:dep_from_hexpm, "~> 0.3.0"},
       #
       #
+      {:deep_merge, "~> 1.0.0", only: [:dev]},
       {:dialyxir, "~> 1.1.0", only: [:dev], runtime: false},
       {:excoveralls, "~> 0.14.2", only: ~w[test]a},
       {:extractly, "~> 0.3.0", only: ~w[dev]a},

@@ -52,7 +52,7 @@ defmodule NestedMap do
 
 
 
-    ### Flatting
+    ### Flattening
 
 
       iex(8)> flatten(%{}) # empty
@@ -76,16 +76,31 @@ defmodule NestedMap do
 
     #### Accessing flattened elements
 
-    iex(0)> flattened =
-    ...(0)>   [ {[:a, :a, :a, :a, :b], 1},
-    ...(0)>     {[:a, :a, :a, :b], 1},
-    ...(0)>     {[:a, :a, :b], 2},
-    ...(0)>     {[:a, :b], 3},
-    ...(0)>     {[:b], 4} ]
-    ...(0)> find(flattened, [:a, :a, :b])
+    iex(11)> flattened =
+    ...(11)>   [ {[:a, :a, :a, :a, :b], 1},
+    ...(11)>     {[:a, :a, :a, :b], 1},
+    ...(11)>     {[:a, :a, :b], 2},
+    ...(11)>     {[:a, :b], 3},
+    ...(11)>     {[:b], 4} ]
+    ...(11)> find(flattened, [:a, :a, :b])
     2
 
+
+    ### Deepening
+    
+    iex(11)> flattened =
+    ...(11)>   [ {[:a, :a, :a, :a, :b], 1},
+    ...(11)>     {[:a, :a, :a, :b], 1},
+    ...(11)>     {[:a, :a, :b], 2},
+    ...(11)>     {[:a, :b], 3},
+    ...(11)>     {[:b], 4} ]
+    ...(11)> deepen(flattened)
+    %{a: %{a: %{a: %{a: %{b: 1}, b: 1}, b: 2}, b: 3}, b: 4}
+
   """
+
+  @doc false
+  def deepen(flattened), do: NestedMap.Deepener.deepen(flattened)
 
   @doc false
   @spec find(flattened_map_t(), list()) :: any()
