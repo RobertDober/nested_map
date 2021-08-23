@@ -159,7 +159,34 @@ and the following code examples are therefore verified with `ExUnit` doctests.
     ...(14)> deepen(tail)
     %{a: %{b: 3}}
 
+  ### Merging
 
+  is now a trivial task as it can be done as follows
+
+      (1) flatten lhs and rhs into arrays
+      (2) make these arrays maps with the compound keys
+      (3) merge these maps
+      (4) make the resulting map a flattened array again
+      (5) deepen this into a map,
+
+  voilà.
+
+  here is a short demonstration:
+
+    iex(15)> a = %{a: %{b: 1, c: 2}}
+    ...(15)> b = %{a: %{b: 2, d: 3}}
+    ...(15)> amap = a |> flatten() |> Enum.into(%{})
+    ...(15)> bmap = b |> flatten() |> Enum.into(%{})
+    ...(15)> Map.merge(amap, bmap) |> flatten() |> Enum.map(fn {[keys], value} -> {keys, value} end) |> deepen()
+    %{a: %{b: 2, c: 2, d: 3}}
+
+  of course this is implemented in a convenience function `merge` which has the same complexity of deepen, in our case
+  `O(K) * O(S) * Complexity of Map.merge` where `K = max (k_of_a, k_of_b) && S = n_of_a + n_of_b` 
+
+    iex(16)> a = %{a: %{b: 1, c: %{d: 2}}, x: 100}
+    ...(16)> b = %{a: %{b: 3, c: %{e: 4}}, y: 200}
+    ...(16)> merge(a, b)
+    %{a: %{b: 3, c: %{d: 2, e: 4}}, x: 100, y: 200}
 
 
 
