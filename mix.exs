@@ -4,10 +4,15 @@ defmodule NestedMap.MixProject do
   @version "0.1.0"
   @url "https://github.com/RobertDober/nested_map"
 
+  @description """
+  NestedMap Tools to work with nested maps / merging / flattening / deepening / simple deep access
+  """
+
   def project do
     [
       app: :nested_map,
-      version: "0.1.0",
+      description: @description,
+      version: @version,
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -18,6 +23,7 @@ defmodule NestedMap.MixProject do
         "coveralls.post": :test,
         "coveralls.html": :test
       ],
+      package: package(),
       aliases: [docs: &build_docs/1],
 
       deps: deps()
@@ -51,6 +57,18 @@ defmodule NestedMap.MixProject do
   defp elixirc_paths(:dev), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
+  defp package do
+    [
+      maintainers: [
+        "Robert Dober <robert.dober@gmail.com>"
+      ],
+      licenses: [
+        "Apache-2.0"
+      ],
+      links: %{
+        "GitHub" => @url},
+    ]
+  end
   @prerequisites """
   run `mix escript.install hex ex_doc` and adjust `PATH` accordingly
   """

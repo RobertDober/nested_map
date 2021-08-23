@@ -168,6 +168,7 @@ defmodule NestedMap do
   """
 
   @doc false
+  @spec deepen(flattened_map_t()) :: map()
   def deepen(flattened), do: NestedMap.Deepener.deepen(flattened)
 
   @doc false
@@ -179,6 +180,7 @@ defmodule NestedMap do
   def flatten(map), do: map |> Enum.into([]) |> NestedMap.Flattener.flatten([], [])
 
   @doc false
+  @spec fetch(map(), any()) :: result_t()
   def fetch(map, keys)
   def fetch(map, keys) when is_list(keys) do
     NestedMap.Fetcher.fetch(map, keys)
@@ -194,6 +196,7 @@ defmodule NestedMap do
   end
 
   @doc false
+  @spec fetch!(map(), any()) :: any() | no_return()
   def fetch!(map, keys) do
     case fetch(map, keys) do
       {:ok, value} -> value
@@ -207,6 +210,7 @@ defmodule NestedMap do
   end
 
   @doc false
+  @spec merge(map(), map()) :: map()
   def merge(lhs, rhs) do
     lmap = lhs |> flatten() |> Enum.into(%{})
     rmap = rhs |> flatten() |> Enum.into(%{})
