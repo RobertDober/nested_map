@@ -21,7 +21,7 @@ and the following code examples are therefore verified with `ExUnit` doctests.
 
 ## Dependency
 
-    { :nested_map, ">= 0.1.0" }
+    { :nested_map, ">= 0.1.1" }
 
   `NestedMap` provides tools to treat nested maps (that came as a surprise),
   notably:
@@ -30,17 +30,17 @@ and the following code examples are therefore verified with `ExUnit` doctests.
   - flatting a nested map to a list of pairs of list of keys and values
   - nested merging
 
-  ## Complexity
+## Complexity
 
   When describing complexities we assume `n` total entries (length of flattened list) with
   a maximum depth of `k` (maximum length of key list). We do not define a bound other than
   `O(n)` for the number of elements of depth `k` and therefore define `m = n*k`
 
-  ### Accessing
+### Accessing
 
   Is of complexity `O(k)` of course
 
-  #### Basic interface
+#### Basic interface
 
     iex(0)> fetch(%{}, :a) # not found
     :error
@@ -67,7 +67,7 @@ and the following code examples are therefore verified with `ExUnit` doctests.
     ...(6)> end
     :caught
 
-  #### Applied to nests
+#### Applied to nests
 
     iex(7)> map = %{
     ...(7)>   a: 1,
@@ -82,7 +82,7 @@ and the following code examples are therefore verified with `ExUnit` doctests.
 
 
 
-  ### Flattening
+### Flattening
 
   The complexity is `O(m)`
 
@@ -105,7 +105,7 @@ and the following code examples are therefore verified with `ExUnit` doctests.
     ...(10)>              # `the_inevitable` before the other keys!
     [{[:a], 1}, {[:b, :the_inevitable], 42}, {[:b, ["you", "can"], "do"], "that"}, {[:b, ["you", "can"], "if", :you], :want}, {[:c], 2}]
 
-  #### Accessing flattened elements
+#### Accessing flattened elements
 
     iex(11)> flattened =
     ...(11)>   [ {[:a, :a, :a, :a, :b], 1},
@@ -117,9 +117,9 @@ and the following code examples are therefore verified with `ExUnit` doctests.
     2
 
 
-  ### Deepening
+### Deepening
 
-  The complexity = `O(k) * O(n) * he complexity of Map.merge`
+  The complexity = `O(k) * O(n) * the complexity of Map.merge`
 
     iex(12)> flattened =
     ...(12)>   [ {[:a, :a, :a, :a, :b], 1},
@@ -130,7 +130,7 @@ and the following code examples are therefore verified with `ExUnit` doctests.
     ...(12)> deepen(flattened)
     %{a: %{a: %{a: %{a: %{b: 1}, b: 1}, b: 2}, b: 3}, b: 4}
 
-  #### One can pass a list that does not represent a flattened map
+#### One can pass a list that does not represent a flattened map
 
     iex(13)> impossible =
     ...(13)>   [ {[:a, :a, :a, :a, :b], 1},
@@ -180,13 +180,22 @@ and the following code examples are therefore verified with `ExUnit` doctests.
     ...(15)> Map.merge(amap, bmap) |> flatten() |> Enum.map(fn {[keys], value} -> {keys, value} end) |> deepen()
     %{a: %{b: 2, c: 2, d: 3}}
 
-  of course this is implemented in a convenience function `merge` which has the same complexity of deepen, in our case
+  of course this is implemented in a convenience function `merge` which has the complexity of deepen, in our case
   `O(K) * O(S) * Complexity of Map.merge` where `K = max (k_of_a, k_of_b) && S = n_of_a + n_of_b` 
 
     iex(16)> a = %{a: %{b: 1, c: %{d: 2}}, x: 100}
     ...(16)> b = %{a: %{b: 3, c: %{e: 4}}, y: 200}
     ...(16)> merge(a, b)
     %{a: %{b: 3, c: %{d: 2, e: 4}}, x: 100, y: 200}
+
+  #### Conflict resolution
+
+  is done as with `Map.merge`
+
+    iex(17)> a = %{a: %{b: 1, c: %{d: 2}}, x: 100}
+    ...(17)> b = %{a: %{b: 3, c: %{e: 4}}, y: 200}
+    ...(17)> merge(a, b, fn _, lhs, rhs -> lhs + rhs end)
+    %{a: %{b: 4, c: %{d: 2, e: 4}}, x: 100, y: 200}
 
 
 

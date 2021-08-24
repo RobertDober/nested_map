@@ -97,7 +97,7 @@ defmodule NestedMap do
 
   ### Deepening
 
-    The complexity = `O(k) * O(n) * he complexity of Map.merge`
+    The complexity = `O(k) * O(n) * the complexity of Map.merge`
 
       iex(12)> flattened =
       ...(12)>   [ {[:a, :a, :a, :a, :b], 1},
@@ -158,13 +158,22 @@ defmodule NestedMap do
       ...(15)> Map.merge(amap, bmap) |> flatten() |> Enum.map(fn {[keys], value} -> {keys, value} end) |> deepen()
       %{a: %{b: 2, c: 2, d: 3}}
 
-    of course this is implemented in a convenience function `merge` which has the same complexity of deepen, in our case
+    of course this is implemented in a convenience function `merge` which has the complexity of deepen, in our case
     `O(K) * O(S) * Complexity of Map.merge` where `K = max (k_of_a, k_of_b) && S = n_of_a + n_of_b` 
 
       iex(16)> a = %{a: %{b: 1, c: %{d: 2}}, x: 100}
       ...(16)> b = %{a: %{b: 3, c: %{e: 4}}, y: 200}
       ...(16)> merge(a, b)
       %{a: %{b: 3, c: %{d: 2, e: 4}}, x: 100, y: 200}
+
+    #### Conflict resolution
+
+    is done as with `Map.merge`
+
+      iex(17)> a = %{a: %{b: 1, c: %{d: 2}}, x: 100}
+      ...(17)> b = %{a: %{b: 3, c: %{e: 4}}, y: 200}
+      ...(17)> merge(a, b, fn _, lhs, rhs -> lhs + rhs end)
+      %{a: %{b: 4, c: %{d: 2, e: 4}}, x: 100, y: 200}
   """
 
   @doc false
@@ -215,6 +224,17 @@ defmodule NestedMap do
     lmap = lhs |> flatten() |> Enum.into(%{})
     rmap = rhs |> flatten() |> Enum.into(%{})
     Map.merge(lmap, rmap)
+      |> flatten() |> Enum.map(fn {[keys], value} -> {keys, value} end)
+      |> deepen()
+  end
+
+  @doc false
+  @spec merge(map(), map(), (any(), any(), any() -> any())) :: map()
+
+  def merge(lhs, rhs, fun) do
+    lmap = lhs |> flatten() |> Enum.into(%{})
+    rmap = rhs |> flatten() |> Enum.into(%{})
+    Map.merge(lmap, rmap, fun)
       |> flatten() |> Enum.map(fn {[keys], value} -> {keys, value} end)
       |> deepen()
   end
