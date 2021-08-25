@@ -43,15 +43,8 @@ defmodule NestedMap.Deepener do
     end
   end
 
-  @spec _make_map_entry(flattend_map_entry_t()) :: map()
-  defp _make_map_entry({keys, value}) do
-    keys
-    |> Enum.reverse()
-    |> Enum.reduce(value, fn k, result -> %{k => result} end)
-  end
-
   @spec _merge_onto_head(flattend_map_entry_t(), list_of_maps()) :: list_of_maps()
   defp _merge_onto_head(flattened_map_entry, [head | tail]) do
-    [Map.merge(head, _make_map_entry(flattened_map_entry)) | tail]
+    [Map.merge(head, NestedMap.make_nested_map(flattened_map_entry)) | tail]
   end
 end

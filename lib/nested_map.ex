@@ -174,21 +174,30 @@ defmodule NestedMap do
       ...(17)> b = %{a: %{b: 3, c: %{e: 4}}, y: 200}
       ...(17)> merge(a, b, fn _, lhs, rhs -> lhs + rhs end)
       %{a: %{b: 4, c: %{d: 2, e: 4}}, x: 100, y: 200}
+
+    ### Creating nested maps
+
+    The `make_nested_map` function supports a _normal_ format
+
+        iex(18)> make_nested_map([:a, :b, :c], 42)
+        %{a: %{b: %{c: 42}}}
+
+    and one that is adapted to iterate over flattened representations
+
+        iex(19)> make_nested_map({[:a, :b, :c], 42})
+        %{a: %{b: %{c: 42}}}
+
   """
 
-  @doc false
   @spec deepen(flattened_map_t()) :: map()
   def deepen(flattened), do: NestedMap.Deepener.deepen(flattened)
 
-  @doc false
   @spec find(flattened_map_t(), list()) :: any()
   def find(flattened, keys), do: NestedMap.Fetcher.find(flattened, keys)
 
-  @doc false
   @spec flatten(map()) :: flattened_map_t()
   def flatten(map), do: map |> Enum.into([]) |> NestedMap.Flattener.flatten([], [])
 
-  @doc false
   @spec fetch(map(), any()) :: result_t()
   def fetch(map, keys)
   def fetch(map, keys) when is_list(keys) do
@@ -204,7 +213,6 @@ defmodule NestedMap do
     end
   end
 
-  @doc false
   @spec fetch!(map(), any()) :: any() | no_return()
   def fetch!(map, keys) do
     case fetch(map, keys) do
@@ -218,7 +226,16 @@ defmodule NestedMap do
     end
   end
 
-  @doc false
+  @spec make_nested_map(list(), any()) :: map()
+  def make_nested_map(keys, value), do: make_nested_map({keys, value})
+
+  @spec make_nested_map(flattend_map_entry_t()) :: map()
+  def make_nested_map({keys, value}) do
+    keys
+    |> Enum.reverse()
+    |> Enum.reduce(value, fn k, result -> %{k => result} end)
+  end
+
   @spec merge(map(), map()) :: map()
   def merge(lhs, rhs) do
     lmap = lhs |> flatten() |> Enum.into(%{})
@@ -228,9 +245,7 @@ defmodule NestedMap do
       |> deepen()
   end
 
-  @doc false
   @spec merge(map(), map(), (any(), any(), any() -> any())) :: map()
-
   def merge(lhs, rhs, fun) do
     lmap = lhs |> flatten() |> Enum.into(%{})
     rmap = rhs |> flatten() |> Enum.into(%{})

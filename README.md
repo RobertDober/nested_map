@@ -21,7 +21,7 @@ and the following code examples are therefore verified with `ExUnit` doctests.
 
 ## Dependency
 
-    { :nested_map, ">= 0.1.1" }
+    { :nested_map, ">= 0.1.2" }
 
   `NestedMap` provides tools to treat nested maps (that came as a surprise),
   notably:
@@ -196,6 +196,19 @@ and the following code examples are therefore verified with `ExUnit` doctests.
     ...(17)> b = %{a: %{b: 3, c: %{e: 4}}, y: 200}
     ...(17)> merge(a, b, fn _, lhs, rhs -> lhs + rhs end)
     %{a: %{b: 4, c: %{d: 2, e: 4}}, x: 100, y: 200}
+
+  ### Creating nested maps
+
+  The `make_nested_map` function supports a _normal_ format
+
+      iex(18)> make_nested_map([:a, :b, :c], 42)
+      %{a: %{b: %{c: 42}}}
+
+  and one that is adapted to iterate over flattened representations
+
+      iex(19)> make_nested_map({[:a, :b, :c], 42})
+      %{a: %{b: %{c: 42}}}
+
 
 
 
